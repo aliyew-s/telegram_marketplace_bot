@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres:17
+    container_name: telegram_marketplace_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: telegram_marketplace
+      POSTGRES_USER: marketplace
+      POSTGRES_PASSWORD: marketplace
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
