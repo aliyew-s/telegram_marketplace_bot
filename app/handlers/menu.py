@@ -340,6 +340,7 @@ async def help_handler(
 @router.callback_query(F.data == "back_to_menu")
 
 
+@router.callback_query(F.data == "back_to_menu")
 async def back_to_menu_handler(
     callback: CallbackQuery,
 ):
@@ -347,11 +348,21 @@ async def back_to_menu_handler(
         callback.from_user.id
     )
 
-    await callback.message.edit_text(
-        t("main_menu", language),
-        reply_markup=main_menu_keyboard(
-            language
-        ),
-    )
+    if callback.message.photo:
+        await callback.message.delete()
+
+        await callback.message.answer(
+            t("main_menu", language),
+            reply_markup=main_menu_keyboard(
+                language
+            ),
+        )
+    else:
+        await callback.message.edit_text(
+            t("main_menu", language),
+            reply_markup=main_menu_keyboard(
+                language
+            ),
+        )
 
     await callback.answer()
