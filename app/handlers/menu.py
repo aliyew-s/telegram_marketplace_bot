@@ -8,7 +8,7 @@ from aiogram.types import (
     FSInputFile,
 )
 from aiogram.fsm.context import FSMContext
-
+from aiogram.exceptions import TelegramBadRequest
 from app.states.groups import AddGroupStates
 
 from app.keyboards.navigation import back_keyboard
@@ -156,7 +156,10 @@ async def my_groups_handler(
         )
 
         if avatar_path:
-            await callback.message.delete()
+            try:
+                await callback.message.delete()
+            except TelegramBadRequest:
+                pass
 
             photo = FSInputFile(avatar_path)
 

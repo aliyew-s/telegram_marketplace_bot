@@ -83,9 +83,18 @@ class TelegramGroupService:
         file_id: str,
     ) -> str | None:
         try:
+            print("DEBUG AVATAR FILE ID:", file_id)
+
             file = await bot.get_file(file_id)
 
+            print("DEBUG AVATAR FILE:", file)
+            print(
+                "DEBUG AVATAR FILE PATH:",
+                file.file_path,
+            )
+
             if not file.file_path:
+                print("DEBUG: FILE PATH IS NONE")
                 return None
 
             with NamedTemporaryFile(
@@ -99,12 +108,21 @@ class TelegramGroupService:
                 destination=file_path,
             )
 
+            print(
+                "DEBUG AVATAR DOWNLOADED:",
+                file_path,
+            )
+
             return file_path
 
         except (
             TelegramBadRequest,
             TelegramForbiddenError,
-        ):
+        ) as error:
+            print(
+                "DEBUG AVATAR ERROR:",
+                error,
+            )
             return None
 
     async def is_bot_admin(
@@ -120,11 +138,6 @@ class TelegramGroupService:
                 user_id=bot_user.id,
             )
 
-            print(
-                "DEBUG BOT STATUS:",
-                member.status,
-            )
-
             return member.status in {
                 "administrator",
                 "creator",
@@ -135,54 +148,5 @@ class TelegramGroupService:
             TelegramForbiddenError,
         ):
             return False
-
-    async def is_user_admin(
-        self,
-        bot: Bot,
-        chat_id: int,
-        user_id: int,
-    ) -> bool:
-        try:
-            member = await bot.get_chat_member(
-                chat_id=chat_id,
-                user_id=user_id,
-            )
-
-            print(
-                "DEBUG USER:",
-                user_id,
-            )
-
-            print(
-                "DEBUG CHAT:",
-                chat_id,
-            )
-
-            print(
-                "DEBUG STATUS:",
-                member.status,
-            )
-
-            return member.status in {
-                "creator",
-                "administrator",
-            }
-
-        except TelegramBadRequest as error:
-            print(
-                "DEBUG TELEGRAM BAD REQUEST:",
-                error,
-            )
-
-            return False
-
-        except TelegramForbiddenError as error:
-            print(
-                "DEBUG TELEGRAM FORBIDDEN:",
-                error,
-            )
-
-            return False
-
-
+        
 telegram_group_service = TelegramGroupService()
