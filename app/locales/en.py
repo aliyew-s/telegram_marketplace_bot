@@ -22,4 +22,15 @@ TEXTS = {
     "by interests and categories.\n\n"
     "Choose an action below:"
 ),
+    "my_groups_empty": (
+        "You don't have any added groups yet."
+    ),
+    "group_number": "👥 <b>Group {current}/{total}</b>",
+    "group_name": "📌 <b>Name:</b>",
+    "group_members": "👥 <b>Members:</b>",
+    "group_status": "📊 <b>Status:</b>",
+    "group_username": "🔗 <b>Username:</b>",
+    "group_description": "📝 <b>Description:</b>",
+    "add_group": "➕ Add group",
+    "main_menu_button": "🏠 Main menu",
 }

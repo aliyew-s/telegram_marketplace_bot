@@ -22,4 +22,15 @@ TEXTS = {
     "göre Telegram grupları bulabilirsiniz.\n\n"
     "Aşağıdan bir işlem seçin:"
 ),
+    "my_groups_empty": (
+        "Henüz eklenmiş grubunuz yok."
+    ),
+    "group_number": "👥 <b>Grup {current}/{total}</b>",
+    "group_name": "📌 <b>Ad:</b>",
+    "group_members": "👥 <b>Üye:</b>",
+    "group_status": "📊 <b>Durum:</b>",
+    "group_username": "🔗 <b>Kullanıcı adı:</b>",
+    "group_description": "📝 <b>Açıklama:</b>",
+    "add_group": "➕ Grup ekle",
+    "main_menu_button": "🏠 Ana menü",
 }

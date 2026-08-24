@@ -2,6 +2,10 @@ from pathlib import Path
 from tempfile import NamedTemporaryFile
 from urllib.parse import urlparse
 
+import hashlib
+
+from PIL import Image, ImageDraw, ImageFont
+
 from aiogram import Bot
 from aiogram.exceptions import (
     TelegramBadRequest,
@@ -148,5 +152,103 @@ class TelegramGroupService:
             TelegramForbiddenError,
         ):
             return False
+
+    async def is_user_admin(
+        self,
+        bot: Bot,
+        chat_id: int,
+        user_id: int,
+    ) -> bool:
+        try:
+            member = await bot.get_chat_member(
+                chat_id=chat_id,
+                user_id=user_id,
+            )
+
+            return member.status in {
+                "creator",
+                "administrator",
+            }
+
+        except (
+            TelegramBadRequest,
+            TelegramForbiddenError,
+        ):
+            return False
+
+    def create_default_avatar(
+        self,
+        name: str,
+    ) -> str:
+        letter = name.strip()[0].upper()
+
+        colors = [
+            (66, 133, 244),
+            (52, 168, 83),
+            (251, 188, 5),
+            (234, 67, 53),
+            (156, 39, 176),
+            (0, 150, 136),
+        ]
+
+        hash_value = hashlib.md5(
+            name.encode("utf-8")
+        ).hexdigest()
+
+        color_index = (
+            int(hash_value[:8], 16)
+            % len(colors)
+        )
+
+        background_color = colors[color_index]
+
+        image = Image.new(
+            "RGB",
+            (500, 500),
+            background_color,
+        )
+
+        draw = ImageDraw.Draw(image)
+
+        try:
+            font = ImageFont.truetype(
+                "/System/Library/Fonts/Helvetica.ttc",
+                250,
+            )
+        except OSError:
+            font = ImageFont.load_default()
+
+        bbox = draw.textbbox(
+            (0, 0),
+            letter,
+            font=font,
+        )
+
+        text_width = bbox[2] - bbox[0]
+        text_height = bbox[3] - bbox[1]
+
+        x = (500 - text_width) / 2
+        y = (500 - text_height) / 2 - bbox[1]
+
+        draw.text(
+            (x, y),
+            letter,
+            fill="white",
+            font=font,
+        )
+
+        with NamedTemporaryFile(
+            suffix=".jpg",
+            delete=False,
+        ) as temp_file:
+            file_path = temp_file.name
+
+        image.save(
+            file_path,
+            format="JPEG",
+            quality=90,
+        )
+
+        return file_path
         
 telegram_group_service = TelegramGroupService()

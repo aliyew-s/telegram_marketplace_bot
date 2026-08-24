@@ -14,6 +14,36 @@ class GroupService:
                 owner_id
             )
 
+    async def get_by_id(
+        self,
+        group_id: int,
+    ):
+        async with session_factory() as session:
+            repository = GroupRepository(session)
+
+            return await repository.get_by_id(
+                group_id
+            )
+
+    async def get_pending_groups(self):
+        async with session_factory() as session:
+            repository = GroupRepository(session)
+
+            return await repository.get_pending_groups()
+
+    async def update_status(
+        self,
+        group_id: int,
+        status: str,
+    ):
+        async with session_factory() as session:
+            repository = GroupRepository(session)
+
+            return await repository.update_status(
+                group_id=group_id,
+                status=status,
+            )
+
     async def create(
         self,
         owner_id: int,

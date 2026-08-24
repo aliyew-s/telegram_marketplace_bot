@@ -14,14 +14,64 @@ class GroupRepository:
     async def get_by_owner_id(
         self,
         owner_id: int,
+    ) -> list[Group]:
+        result = await self.session.execute(
+            select(Group)
+            .where(
+                Group.owner_id == owner_id
+            )
+            .order_by(
+                Group.created_at.desc()
+            )
+        )
+
+        return list(result.scalars().all())
+
+
+    async def get_by_id(
+        self,
+        group_id: int,
     ) -> Group | None:
         result = await self.session.execute(
             select(Group).where(
-                Group.owner_id == owner_id
+                Group.id == group_id
             )
         )
 
         return result.scalar_one_or_none()
+
+    async def get_pending_groups(
+        self,
+    ) -> list[Group]:
+        result = await self.session.execute(
+            select(Group)
+            .where(
+                Group.status == "pending"
+            )
+            .order_by(
+                Group.created_at.asc()
+            )
+        )
+
+        return list(result.scalars().all())
+
+    async def update_status(
+        self,
+        group_id: int,
+        status: str,
+    ) -> Group | None:
+        group = await self.get_by_id(group_id)
+
+        if group is None:
+            return None
+
+        group.status = status
+
+        await self.session.commit()
+        await self.session.refresh(group)
+
+        return group
+    
 
     async def create(
         self,
